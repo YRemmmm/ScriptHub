@@ -1,0 +1,38 @@
+services:
+  web:
+    image: githubyumao/mcsmanager-web:latest
+    container_name: mcsmanager_web
+    restart: unless-stopped
+    ports:
+      - "23333:23333"
+    volumes:
+      - /etc/localtime:/etc/localtime:ro
+      - /home/yr/Public/docker/mcsmanager/web/data:/opt/mcsmanager/web/data
+      - /home/yr/Public/docker/mcsmanager/web/logs:/opt/mcsmanager/web/logs
+    networks:
+      mcsmanager_network:
+        aliases:
+          - mcsmanager_web
+
+  daemon:
+    image: githubyumao/mcsmanager-daemon:latest
+    container_name: mcsmanager_daemon
+    restart: unless-stopped
+    ports:
+      - "24444:24444"
+      - "25565:25565"
+    environment:
+      - MCSM_DOCKER_WORKSPACE_PATH=/home/yr/Public/docker/mcsmanager/daemon/data/InstanceData
+    volumes:
+      - /etc/localtime:/etc/localtime:ro
+      - /home/yr/Public/docker/mcsmanager/daemon/data:/opt/mcsmanager/daemon/data
+      - /home/yr/Public/docker/mcsmanager/daemon/logs:/opt/mcsmanager/daemon/logs
+      - /var/run/docker.sock:/var/run/docker.sock
+    networks:
+      mcsmanager_network:
+        aliases:
+          - mcsmanager_daemon
+
+networks:
+  mcsmanager_network:
+    driver: bridge
